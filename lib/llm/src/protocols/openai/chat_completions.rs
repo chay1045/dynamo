@@ -177,21 +177,21 @@ impl CommonExtProvider for NvCreateChatCompletionRequest {
         if let Some(response_format) = &self.inner.response_format {
             match response_format {
                 ResponseFormat::JsonSchema { json_schema } => {
-                    eprintln!("DEBUG: Extracting JSON schema from response_format");
+                    //eprintln!("DEBUG: Extracting JSON schema from response_format");
                     if let Some(schema) = &json_schema.schema {
-                        eprintln!("DEBUG: Found schema in response_format: {:?}", schema);
+                        //eprintln!("DEBUG: Found schema in response_format: {:?}", schema);
                         return Some(schema.clone());
                     } else {
-                        eprintln!("WARN: json_schema.schema is None, using empty object");
+                        //eprintln!("WARN: json_schema.schema is None, using empty object");
                         return Some(serde_json::json!({}));
                     }
                 },
                 ResponseFormat::JsonObject => {
-                    eprintln!("DEBUG: Using generic JSON object mode from response_format");
+                    //eprintln!("DEBUG: Using generic JSON object mode from response_format");
                     return Some(serde_json::json!({}));
                 },
                 ResponseFormat::Text => {
-                    eprintln!("DEBUG: Text format specified in response_format");
+                    //eprintln!("DEBUG: Text format specified in response_format");
                 },
             }
         }
