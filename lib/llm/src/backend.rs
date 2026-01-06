@@ -362,6 +362,17 @@ pub enum StopTrigger {
     HiddenStopSequenceDetected(String),
     VisibleStopSequenceDetected(String),
 }
+impl StopTrigger {
+    pub fn should_hide_text(&self) -> bool {
+        match self {
+            StopTrigger::MaxTokensLimit => false,
+            StopTrigger::HiddenStopTokenDetected(_) => true,
+            StopTrigger::HiddenStopSequenceDetected(_) => true,
+            StopTrigger::VisibleStopSequenceDetected(_) => true,
+        }
+    }
+    
+}
 
 pub struct StepResult {
     pub token: Option<String>,
@@ -533,9 +544,13 @@ impl Decoder {
                 token,
                 stop_trigger,
             } = self.step(*token_id)?;
+            let hide_text = stop_trigger
+                .as_ref()
+                .map(|x| x.should_hide_text())
+                .unwrap_or(false);
 
+           if !hide_text && let Some(token) = &token {
             // Always include token text (for visible stops, the stop string is already in the token)
-            if let Some(token) = &token {
                 text.get_or_insert_with(|| String::with_capacity(token_ids.len()))
                     .push_str(token);
             }
